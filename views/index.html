@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+  <head>
+        <meta charset="utf-8">
+        <title>SQRL</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="global.css">
+        <script src="qrcode.min.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="qrcode" title="<%= url %>"></div>
+    <script type="text/javascript">
+    var QRElem = document.getElementById('qrcode');
+    var QROptions = {
+      text: QRElem.title
+    };
+    var code = new QRCode(QRElem , QROptions);
+    </script>
+  </body>
+</html>
