@@ -15,5 +15,5 @@ var keypair = ecc.MakeKeypair(hash);
 
 var signature = ecc.Sign(msg, keypair);
 
-console.log(signature);
+console.log(signature); 
 
