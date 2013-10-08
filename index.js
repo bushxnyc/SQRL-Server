@@ -45,10 +45,14 @@ app.get('/', function (req, res) {
 app.post('/sqrl', function (req, res) {
   console.log(req.url + '\n' + req.body.sig + '\n' + req.body.pkey);
   var challenge = 'https://sqrl.blakearnold.me' + req.url;
-  if(ecc.Verify(new Buffer(challenge, 'utf8'), req.sig, req.key)) {  
-    res.send(200);
-  } else {
-    res.send(400);
+  try {
+    // if(ecc.Verify(new Buffer(challenge, 'utf8'), req.sig, req.key)) {  
+      // res.send(200);
+    // } else {
+      // res.send(400);
+    // }
+  } catch (err) {
+    console.log('Caught Err');
   }
 });
 
