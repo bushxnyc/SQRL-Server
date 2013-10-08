@@ -44,13 +44,15 @@ app.get('/', function (req, res) {
 
 // a post to our sqrl auth url
 app.post('/sqrl', function (req, res) {
-  var challenge = 'https://sqrl.blakearnold.me' + req.url;
+  var challenge = new Buffer('https://sqrl.blakearnold.me' + req.url);
+  var signature = new Buffer(req.body.sig);
+  var key = new Buffer(req.body.key);
   console.log(challenge + '\n' + req.body.sig + '\n' + req.body.key);
   try {
-    if(ecc.Verify(new Buffer(challenge, 'utf8'), req.body.sig, req.body.key)) {  
+    if(ecc.Verify(challenge, signature, key)) {  
       res.send(200);
     } else {
-       res.send(400);
+      res.send(400);
     }
   } catch (err) {
     fs.writeFile('ECCerror.error', err, function (err) {
