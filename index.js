@@ -1,6 +1,7 @@
 // required modules
 var express = require('express'),
-    crypto = require('crypto');
+    crypto = require('crypto'),
+    ed25519 = require('./node_modules/ed25519/native');
     
 var counter = 0;
 
