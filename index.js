@@ -1,7 +1,8 @@
 // required modules
 var express = require('express'),
     crypto = require('crypto'),
-    ecc = require('./node_modules/ed25519/native');
+    ecc = require('./node_modules/ed25519/native'),
+    fs = require('fs');
 
 // some salt for nonce
 var counter = 0;
@@ -52,7 +53,10 @@ app.post('/sqrl', function (req, res) {
        res.send(400);
     }
   } catch (err) {
-    console.log('Caught Err');
+    fs.writeFile('ECCerror.error', err, function (err) {
+      if (err) throw err;
+      console.log('Caught Err');
+    });
     res.send(500);
   }
 });
