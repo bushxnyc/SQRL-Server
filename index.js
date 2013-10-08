@@ -11,7 +11,7 @@ var app = express();
 
 // set cookieParser and Session
 app.use(express.cookieParser());
-app.use(express.session({ secret: '01234567890ABCDEFGHIJ' });
+app.use(express.session({ secret: '01234567890ABCDEFGHIJ' }));
 
 // set development logging to console
 app.use(express.logger('dev'));
