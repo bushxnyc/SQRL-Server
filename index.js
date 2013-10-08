@@ -10,10 +10,6 @@ var counter = 0;
 // init express app    
 var app = express();
 
-// set cookieParser and Session
-app.use(express.cookieParser());
-app.use(express.session({ secret: '01234567890ABCDEFGHIJ' }));
-
 // set development logging to console
 app.use(express.logger('dev'));
 
@@ -51,8 +47,6 @@ app.post('/sqrl', function (req, res) {
   
   var key = new Buffer(32);
   key.write(req.body.key);
-  
-  console.log(challenge + '\n' + req.body.sig + '\n' + req.body.key);
   
   try {
     if(ecc.Verify(challenge, signature, key)) {  
