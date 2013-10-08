@@ -15,6 +15,9 @@ app.set('view engine', 'html');
 // set development logging to console
 app.use(express.logger('dev'));
 
+// use body parser to get post data
+app.use(express.bodyParser());
+
 // setup static directory
 app.use(express.static(__dirname + '/static'));
 
@@ -36,7 +39,8 @@ app.get('/', function (req, res) {
 
 // a post to our sqrl auth url
 app.post('/sqrl', function (req, res) {
-  console.log(req.query);
+  console.log(req.url + '\n' + req.body.sig + '\n' + req.body.pkey);
+  res.send(200);
   // var public key
   // var signature
   // use public key to decrypt signature
