@@ -1,0 +1,27 @@
+{
+  "name": "SQRL-Server",
+  "version": "0.0.1",
+  "description": "SQRL Server",
+  "main": "index.js",
+  "dependencies": {
+    "ejs": "~0.8.4",
+    "express": "~3.4.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arnoldblake/SQRL-Server.git"
+  },
+  "keywords": [
+    "SQRL",
+    "Server"
+  ],
+  "author": "Blake Arnold",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/arnoldblake/SQRL-Server/issues"
+  }
+}
