@@ -6,9 +6,6 @@ var express = require('express'),
 // some salt for nonce
 var counter = 0;
 
-// non persistent account tracking
-var sessions = {};
-
 // init express app    
 var app = express();
 
@@ -37,11 +34,10 @@ app.get('/', function (req, res) {
   // update the hash object with the current time
   // digest the hash as the nonce and append it to the sqrl url
   // pass the string to our renderer
-  var hash = crypto.createHash('sha1');
+  var hash = crypto.createHash('md5');
   hash.update(new Date().getTime().toString() + counter, 'utf8');
-  var nonce = hash.digest('hex');  
+  var nonce = hash.digest('hex');
   var string = "https://sqrl.blakearnold.me/sqrl?" + nonce.toString();
-  console.log(req.session);
   res.render('index', { url: string });
   counter += 1;
 });
