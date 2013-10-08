@@ -43,16 +43,17 @@ app.get('/', function (req, res) {
 
 // a post to our sqrl auth url
 app.post('/sqrl', function (req, res) {
-  console.log(req.url + '\n' + req.body.sig + '\n' + req.body.pkey);
   var challenge = 'https://sqrl.blakearnold.me' + req.url;
+  console.log(challenge + '\n' + req.body.sig + '\n' + req.body.key);
   try {
-    // if(ecc.Verify(new Buffer(challenge, 'utf8'), req.sig, req.key)) {  
-      // res.send(200);
-    // } else {
-      // res.send(400);
-    // }
+    if(ecc.Verify(new Buffer(challenge, 'utf8'), req.body.sig, req.body.key)) {  
+      res.send(200);
+    } else {
+       res.send(400);
+    }
   } catch (err) {
     console.log('Caught Err');
+    res.send(500);
   }
 });
 
