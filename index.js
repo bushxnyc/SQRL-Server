@@ -2,21 +2,29 @@
 var express = require('express'),
     crypto = require('crypto'),
     ed25519 = require('./node_modules/ed25519/native');
-    
+
+// some salt for nonce
 var counter = 0;
+
+// non persistent account tracking
+var sessions = {};
 
 // init express app    
 var app = express();
 
-// set ejs as template engine and html as doctype
-app.engine('.html', require('ejs').__express);
-app.set('view engine', 'html');
+// set cookieParser and Session
+app.use(express.cookieParser());
+app.use(express.session({ secret: '01234567890ABCDEFGHIJ' });
 
 // set development logging to console
 app.use(express.logger('dev'));
 
 // use body parser to get post data
 app.use(express.bodyParser());
+
+// set ejs as template engine and html as doctype
+app.engine('.html', require('ejs').__express);
+app.set('view engine', 'html');
 
 // setup static directory
 app.use(express.static(__dirname + '/static'));
@@ -32,7 +40,8 @@ app.get('/', function (req, res) {
   var hash = crypto.createHash('sha1');
   hash.update(new Date().getTime().toString() + counter, 'utf8');
   var nonce = hash.digest('hex');  
-  var string = "https://sqrl.blakearnold.me/sqrl?" + nonce.toString();  
+  var string = "https://sqrl.blakearnold.me/sqrl?" + nonce.toString();
+  console.log(req.session);
   res.render('index', { url: string });
   counter += 1;
 });
