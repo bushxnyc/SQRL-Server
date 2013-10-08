@@ -12,7 +12,8 @@
     <script type="text/javascript">
     var QRElem = document.getElementById('qrcode');
     var QROptions = {
-      text: QRElem.title
+      text: QRElem.title,
+      correctLevel: QRCode.CorrectLevel.L
     };
     var code = new QRCode(QRElem , QROptions);
     </script>
