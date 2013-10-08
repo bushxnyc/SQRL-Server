@@ -1,7 +1,7 @@
 // required modules
 var express = require('express'),
     crypto = require('crypto'),
-    ed25519 = require('./node_modules/ed25519/native');
+    ecc = require('./node_modules/ed25519/native');
 
 // some salt for nonce
 var counter = 0;
@@ -28,12 +28,11 @@ app.use(express.static(__dirname + '/static'));
 
 // a get on our root will generate a qr code with
 // our sqrl url + nonce
+// create a new node hash object of type sha1
+// update the hash object with the current time
+// digest the hash as the nonce and append it to the sqrl url
+// pass the string to our renderer
 app.get('/', function (req, res) {
-
-  // create a new node hash object of type sha1
-  // update the hash object with the current time
-  // digest the hash as the nonce and append it to the sqrl url
-  // pass the string to our renderer
   var hash = crypto.createHash('md5');
   hash.update(new Date().getTime().toString() + counter, 'utf8');
   var nonce = hash.digest('hex');
@@ -45,12 +44,12 @@ app.get('/', function (req, res) {
 // a post to our sqrl auth url
 app.post('/sqrl', function (req, res) {
   console.log(req.url + '\n' + req.body.sig + '\n' + req.body.pkey);
-  res.send(200);
-  // var public key
-  // var signature
-  // use public key to decrypt signature
-  // check if post query string matches supplied query string
-  // return 200 OK if they do else fail if not
+  var challenge = 'https://sqrl.blakearnold.me' + req.url;
+  if(ecc.Verify(new Buffer(challenge, 'utf8'), req.sig, req.key)) {  
+    res.send(200);
+  } else {
+    res.send(400);
+  }
 });
 
 // listen on port 8080
