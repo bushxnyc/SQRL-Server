@@ -36,6 +36,7 @@ app.get('/', function (req, res) {
 
 // a post to our sqrl auth url
 app.post('/sqrl', function (req, res) {
+  console.log(req.query);
   // var public key
   // var signature
   // use public key to decrypt signature
