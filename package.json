@@ -5,7 +5,8 @@
   "main": "index.js",
   "dependencies": {
     "ejs": "~0.8.4",
-    "express": "~3.4.0"
+    "express": "~3.4.0",
+    "request": "*"
   },
   "devDependencies": {},
   "scripts": {
@@ -23,5 +24,8 @@
   "license": "BSD-2-Clause",
   "bugs": {
     "url": "https://github.com/arnoldblake/SQRL-Server/issues"
+  },
+  "directories": {
+    "test": "test"
   }
 }
