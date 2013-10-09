@@ -18,7 +18,7 @@ var keypair = ecc.MakeKeypair(hash);
 // 64byte signature lengths
 var signature = ecc.Sign(msg, keypair).toString(),
     publicKey = keypair.publicKey.toString(),
-    postBody = signature + '\n' + publicKey;
+    postBody = 'sig=' + signature + 'key=' + publicKey;
 
 var options = {
   url: 'http://localhost:8080/sqrl?' + nonce,

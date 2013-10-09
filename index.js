@@ -41,8 +41,7 @@ app.get('/', function (req, res) {
 // a post to our sqrl auth url
 app.post('/sqrl', function (req, res) {
   var challenge = new Buffer('sqrl.blakearnold.me' + req.url);
-  var bodyArray = req.body.split('\n');
-  console.log(bodyArray);
+  console.log(req.body);
   
   // var signature = new Buffer(64);
   // signature.write(req.body.sig);
