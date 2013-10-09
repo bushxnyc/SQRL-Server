@@ -12,18 +12,23 @@ var seed = '1234567890abcdefghij1234567890ab';
 // create hash update with seed and digest returns buffer
 var hash = crypto.createHash('sha256').update(seed).digest();
 
+// 32byte keypair lengths
 var keypair = ecc.MakeKeypair(hash);
 
-var signature = ecc.Sign(msg, keypair);
+// 64byte signature lengths
+var signature = ecc.Sign(msg, keypair).toString();
+var publicKey = keypair.publicKey.toString();
+var postBody = 'sig=' + signature + '&key=' + publicKey;
 
-console.log(signature.length);
-console.log(keypair.publicKey);
+var body = new Buffer(postBody);
 
-// var options = {
-  // url: 'http://localhost:8080/sqrl',
-  // method: 'post',
-  // body: 'sig=' + signature.to
-// request(options, function () {});
-
-console.log(signature); 
-
+var options = {
+  url: 'http://localhost:8080/sqrl?' + nonce,
+  method: 'post',
+  body: postBody 
+};
+request(options, function (err, response, body) {
+  if (err) throw err;
+  console.log(response);
+  console.log(body);
+});
