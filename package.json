@@ -6,7 +6,8 @@
   "dependencies": {
     "ejs": "~0.8.4",
     "express": "~3.4.0",
-    "request": "*"
+    "request": "*",
+    "ed25519": "https://github.com/dazoe/ed25519/tarball/master"
   },
   "devDependencies": {},
   "scripts": {
