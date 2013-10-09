@@ -41,27 +41,26 @@ app.get('/', function (req, res) {
 // a post to our sqrl auth url
 app.post('/sqrl', function (req, res) {
   var challenge = new Buffer('sqrl.blakearnold.me' + req.url);
-  console.log(req.body);
-  
-  // var signature = new Buffer(64);
-  // signature.write(req.body.sig);
-  
-  // var key = new Buffer(32);
-  // key.write(req.body.key);
-  
-  // try {
-    // if(ecc.Verify(challenge, signature, key)) {  
-      // res.send(200);
-    // } else {
-      // res.send(400);
-    // }
-  // } catch (err) {
-    // fs.writeFile('ECCerror.error', err, function (err) {
-      // if (err) throw err;
-      // console.log('Caught Err');
-    // });
-    // res.send(500);
-  // }
+  var signature = new Buffer(req.body.sig);
+  var key = new Buffer(req.body.key);
+
+  console.log(challenge.toString());
+  console.log(req.body.sig.length);
+  console.log(req.body.key.length);
+
+  try {
+    if(ecc.Verify(challenge, signature, key)) {  
+      res.send(200);
+    } else {
+      res.send(400);
+    }
+  } catch (err) {
+     fs.writeFile('ECCerror.error', err, function (err) {
+       if (err) throw err;
+       console.log('Caught Err');
+     });
+     res.send(500);
+   }
 });
 
 // listen on port 8080
