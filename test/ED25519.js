@@ -1,5 +1,5 @@
 var crypto = require('crypto');
-var ed25519 = require('../node_modules/ed25519/native');
+var ed25519 = require('ed25519');
 
 /*
 First lets make some keypairs.

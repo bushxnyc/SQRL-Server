@@ -1,8 +1,9 @@
 // required modules
 var express = require('express'),
     crypto = require('crypto'),
-    ecc = require('./node_modules/ed25519/native'),
-    fs = require('fs');
+    ecc = require('ed25519'),
+    fs = require('fs'),
+    querystring = require('querystring');
 
 // some salt for nonce
 var counter = 0;
@@ -44,9 +45,7 @@ app.post('/sqrl', function (req, res) {
   var signature = new Buffer(req.body.sig);
   var key = new Buffer(req.body.key);
 
-  console.log(challenge.toString());
-  console.log(req.body.sig.length);
-  console.log(req.body.key.length);
+  console.log(req.body.sig); 
 
   try {
     if(ecc.Verify(challenge, signature, key)) {  
