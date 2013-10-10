@@ -5,8 +5,13 @@ var express = require('express'),
     fs = require('fs'),
     querystring = require('querystring');
 
+var hostname = 'localhost';
+
 // some salt for nonce
 var counter = 0;
+
+// nonce tracking for challenge verification
+var urlNonce = {};
 
 // init express app    
 var app = express();
@@ -34,32 +39,41 @@ app.get('/', function (req, res) {
   var hash = crypto.createHash('md5');
   hash.update(new Date().getTime().toString() + counter, 'utf8');
   var nonce = hash.digest('hex');
-  var string = "https://sqrl.blakearnold.me/sqrl?" + nonce.toString();
+  var string = 'http://localhost:8080/sqrl?' + nonce.toString();
   res.render('index', { url: string });
   counter += 1;
+  urlNonce[nonce] = new Date().getTime();
+  console.log('Generated nonce: ' + nonce + 
+    ' with timestamp: ' + urlNonce[nonce]);
 });
 
 // a post to our sqrl auth url
 app.post('/sqrl', function (req, res) {
-  var challenge = new Buffer('sqrl.blakearnold.me' + req.url);
-  var signature = new Buffer(req.body.sig);
-  var key = new Buffer(req.body.key);
+  var nonce = req.url.slice(6, req.url.length);
+  console.log('Challenge for: ' + nonce);
 
-  console.log(req.body.sig); 
+  if (urlNonce[nonce]) {
+    var challenge = new Buffer('localhost:8080' + req.url);
+    var signature = new Buffer(req.body.sig);
+    var key = new Buffer(req.body.key);
 
-  try {
-    if(ecc.Verify(challenge, signature, key)) {  
-      res.send(200);
-    } else {
-      res.send(400);
+    try {
+      if(ecc.Verify(challenge, signature, key)) {  
+        res.send(200);
+      } else {
+        res.send(400);
+      }
+    } catch (err) {
+       fs.writeFile('ECCerror.error', err, function (err) {
+         if (err) throw err;
+         console.log('Caught Err');
+       });
+       res.send(500);
     }
-  } catch (err) {
-     fs.writeFile('ECCerror.error', err, function (err) {
-       if (err) throw err;
-       console.log('Caught Err');
-     });
-     res.send(500);
-   }
+    delete urlNonce[nonce]; 
+  } else {
+    res.send(400);
+  }
 });
 
 // listen on port 8080
