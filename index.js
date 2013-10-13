@@ -13,7 +13,7 @@ var counter = 0;
 // nonce tracking for challenge verification
 var urlNonce = {};
 
-// init express app    
+// init express app
 var app = express();
 
 // set development logging to console
@@ -39,7 +39,7 @@ app.get('/', function (req, res) {
   var hash = crypto.createHash('md5');
   hash.update(new Date().getTime().toString() + counter, 'utf8');
   var nonce = hash.digest('hex');
-  var string = 'http://localhost:8080/sqrl?' + nonce.toString();
+  var string = 'sqrl://localhost:8080/sqrl?nut=' + nonce.toString();
   res.render('index', { url: string });
   counter += 1;
   urlNonce[nonce] = new Date().getTime();
