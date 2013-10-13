@@ -8,11 +8,15 @@
         <script src="qrcode.min.js" type="text/javascript"></script>
   </head>
   <body>
-    <div id="qrcode" title="<%= url %>"></div>
+
+  <div>
+  <a id="qrcode" href="<%= url %>">
+  </a>
+  </div>
     <script type="text/javascript">
     var QRElem = document.getElementById('qrcode');
     var QROptions = {
-      text: QRElem.title,
+      text: QRElem.href,
       correctLevel: QRCode.CorrectLevel.L
     };
     var code = new QRCode(QRElem , QROptions);
