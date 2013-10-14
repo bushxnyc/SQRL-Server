@@ -53,6 +53,9 @@ app.post('/sqrl', function (req, res) {
   var url_parts = url.parse(req.url, true);
   var nonce = url_parts.query['nut'];
   console.log('Challenge for: ' + nonce);
+    var url_parts = url.parse(req.url, true);
+    var nonce = url_parts.query['nut'];
+    console.log('Challenge for: ' + nonce);
 
   if (urlNonce[nonce]) {
     var challenge = new Buffer('localhost:8080' + req.url);
@@ -60,11 +63,16 @@ app.post('/sqrl', function (req, res) {
     var key = new Buffer(url_parts.query['sqrlkey']);
 
     console.log("Key: " + key + ", \nSig: " + signature + ", \nChallenge: " + challenge);
+        var challenge = new Buffer('localhost:8080' + req.url);
+        var signature = new Buffer(base64url.toBuffer(req.body['sqrlsig'] + "="));
+        var key = new Buffer(base64url.toBuffer(url_parts.query['sqrlkey'] + "=="));
 
     try {
       if(ecc.Verify(challenge, signature, key)) {
         res.send(200);
       } else {
+        console.log("Key: " + key + ", \nSig: " + req.body['sqrlsig'] + ", \nChallenge: " + challenge);
+
         res.send(400);
       }
     } catch (err) {
