@@ -3,6 +3,7 @@ var express = require('express'),
     crypto = require('crypto'),
     ecc = require('ed25519'),
     fs = require('fs'),
+    url = require('url'),
     querystring = require('querystring');
 
 var hostname = 'localhost';
@@ -43,22 +44,25 @@ app.get('/', function (req, res) {
   res.render('index', { url: string });
   counter += 1;
   urlNonce[nonce] = new Date().getTime();
-  console.log('Generated nonce: ' + nonce + 
+  console.log('Generated nonce: ' + nonce +
     ' with timestamp: ' + urlNonce[nonce]);
 });
 
 // a post to our sqrl auth url
 app.post('/sqrl', function (req, res) {
-  var nonce = req.url.slice(6, req.url.length);
+  var url_parts = url.parse(req.url, true);
+  var nonce = url_parts.query['nut'];
   console.log('Challenge for: ' + nonce);
 
   if (urlNonce[nonce]) {
     var challenge = new Buffer('localhost:8080' + req.url);
-    var signature = new Buffer(req.body.sig);
-    var key = new Buffer(req.body.key);
+    var signature = new Buffer(req.body['sqrlsig']);
+    var key = new Buffer(url_parts.query['sqrlkey']);
+
+    console.log("Key: " + key + ", \nSig: " + signature + ", \nChallenge: " + challenge);
 
     try {
-      if(ecc.Verify(challenge, signature, key)) {  
+      if(ecc.Verify(challenge, signature, key)) {
         res.send(200);
       } else {
         res.send(400);
@@ -70,7 +74,7 @@ app.post('/sqrl', function (req, res) {
        });
        res.send(500);
     }
-    delete urlNonce[nonce]; 
+    delete urlNonce[nonce];
   } else {
     res.send(400);
   }
