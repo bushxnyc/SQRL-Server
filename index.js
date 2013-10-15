@@ -61,7 +61,7 @@ app.post('/sqrl', function (req, res) {
         var signature = new Buffer(base64url.toBuffer(req.body['sqrlsig'] + "="));
         var key = new Buffer(base64url.toBuffer(url_parts.query['sqrlkey'] + "=="));
 
-        console.log("Key: " + url_parts.query['sqrlkey'] + " \nSig: " + req.body['sqrlsig'] + " \nChallenge: " + challenge);
+        console.log("Key: " + url_parts.query['sqrlkey'] + " \nSignature: " + req.body['sqrlsig'] + " \nChallenge: " + challenge);
 
         try {
             if(ecc.Verify(challenge, signature, key)) {
