@@ -76,7 +76,7 @@ app.post('/sqrl', function (req, res) {
             });
             res.send(500);
         }
-        //delete urlNonce[nonce];
+        delete urlNonce[nonce];
     } else {
         res.send(400);
     }
