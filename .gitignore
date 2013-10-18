@@ -1,10 +1,10 @@
 #################
 ## Eclipse
 #################
-
 *.pydevproject
 .project
 .metadata
+ECCerror.error
 bin/
 tmp/
 *.tmp

@@ -1,11 +1,9 @@
 // required modules
 var express = require('express'),
     crypto = require('crypto'),
-    ecc = require('ed25519'),
-    fs = require('fs'),
-    url = require('url'),
-    base64url = require('base64url'),
-    querystring = require('querystring');
+    querystring = require('querystring'),
+    ecc = require('./lib/ECCVerify'),
+    SQRLParser = require('./lib/SQRLParser');
 
 var hostname = 'localhost';
 
@@ -13,7 +11,8 @@ var hostname = 'localhost';
 var counter = 0;
 
 // nonce tracking for challenge verification
-var urlNonce = {};
+var urlNonce = {},
+    eccverify = new ecc();
 
 // init express app
 var app = express();
@@ -51,16 +50,15 @@ app.get('/', function (req, res) {
 
 // a post to our sqrl auth url
 app.post('/sqrl', function (req, res) {
-    var url_parts = url.parse(req.url, true);
-    var nonce = url_parts.query['nut'];
-    console.log('Challenge for: ' + nonce);
+    var parser = new SQRLParser(req)
+    console.log('Challenge for: ' + parser.nonce);
 
-    if (urlNonce[nonce]) {
+    if (urlNonce[parser.nonce]) {
 
-        var challenge = new Buffer('localhost:8080' + req.url);
-        var signature = new Buffer(base64url.toBuffer(req.body['sqrlsig'] + "="));
-        var key = new Buffer(base64url.toBuffer(url_parts.query['sqrlkey'] + "=="));
+        var result = eccverify.check(parser.domain, parser.sig, parser.key);
+        res.send(result);
 
+<<<<<<< HEAD
         console.log("Key: " + url_parts.query['sqrlkey'] + " \nSignature: " + req.body['sqrlsig'] + " \nChallenge: " + challenge);
 
         try {
@@ -77,6 +75,9 @@ app.post('/sqrl', function (req, res) {
             res.send(500);
         }
         //delete urlNonce[nonce];
+=======
+        delete urlNonce[parser.nonce];
+>>>>>>> 2c69685889a37e671fadbe7a653207f2164db947
     } else {
         res.send(400);
     }
