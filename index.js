@@ -58,26 +58,7 @@ app.post('/sqrl', function (req, res) {
         var result = eccverify.check(parser.domain, parser.sig, parser.key);
         res.send(result);
 
-<<<<<<< HEAD
-        console.log("Key: " + url_parts.query['sqrlkey'] + " \nSignature: " + req.body['sqrlsig'] + " \nChallenge: " + challenge);
-
-        try {
-            if(ecc.Verify(challenge, signature, key)) {
-                res.send(200);
-            } else {
-                res.send(400);
-            }
-        } catch (err) {
-            fs.writeFile('ECCerror.error', err, function (err) {
-                if (err) throw err;
-                console.log('Caught Err');
-            });
-            res.send(500);
-        }
-        //delete urlNonce[nonce];
-=======
         delete urlNonce[parser.nonce];
->>>>>>> 2c69685889a37e671fadbe7a653207f2164db947
     } else {
         res.send(400);
     }
