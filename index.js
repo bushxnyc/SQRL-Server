@@ -51,7 +51,7 @@ app.get('/', function (req, res) {
 });
 
 // a post to our sqrl auth url
-app.post('/sqrl', function (req, res) {
+app.post('*/sqrl', function (req, res) {
     var parser = new SQRLParser(req)
     console.log('Challenge for: ' + parser.nonce);
 
