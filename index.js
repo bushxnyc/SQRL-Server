@@ -3,7 +3,8 @@ var express = require('express'),
     crypto = require('crypto'),
     querystring = require('querystring'),
     ecc = require('./lib/ECCVerify'),
-    SQRLParser = require('./lib/SQRLParser');
+    SQRLParser = require('./lib/SQRLParser'),
+    io = require('socket.io').listen(9090);
 
 var hostname = 'localhost';
 
@@ -12,7 +13,8 @@ var counter = 0;
 
 // nonce tracking for challenge verification
 var urlNonce = {},
-    eccverify = new ecc();
+    eccverify = new ecc(),
+    clients = {};
 
 // init express app
 var app = express();
@@ -41,7 +43,7 @@ app.get('/', function (req, res) {
     hash.update(new Date().getTime().toString() + counter, 'utf8');
     var nonce = hash.digest('hex');
     var string = 'sqrl://localhost:8080/sqrl?nut=' + nonce.toString();
-    res.render('index', { url: string });
+    res.render('index', { url: string, nonce: nonce.toString() });
     counter += 1;
     urlNonce[nonce] = new Date().getTime();
     console.log('Generated nonce: ' + nonce +
@@ -56,12 +58,28 @@ app.post('/sqrl', function (req, res) {
     if (urlNonce[parser.nonce]) {
 
         var result = eccverify.check(parser.domain, parser.sig, parser.key);
-        res.send(result);
+        if (result) {
+            msg = "You're logged in!"
+        } else {
+            msg = "You Failed!"
+        }
 
         delete urlNonce[parser.nonce];
     } else {
+        msg = "Your Nut isn't registered"
         res.send(400);
     }
+
+    io.sockets.socket(clients[parser.nonce]).emit('response', {msg: msg});
+    res.send(result);
+
+});
+
+io.sockets.on('connection', function (socket) {
+  socket.emit('sqrl', { msg: 'Youre In!' });
+  socket.on('register', function(nonce){
+    clients[nonce['data']] = socket.id;
+  });
 });
 
 // listen on port 8080

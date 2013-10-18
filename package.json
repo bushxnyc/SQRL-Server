@@ -8,7 +8,8 @@
     "express": "~3.4.0",
     "request": "*",
     "ed25519": "https://github.com/dazoe/ed25519/tarball/master",
-    "base64url": "*"
+    "base64url": "*",
+    "socket.io": "*"
   },
   "devDependencies": {},
   "scripts": {
