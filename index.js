@@ -59,24 +59,25 @@ app.post('/sqrl', function (req, res) {
 
         var result = eccverify.check(parser.domain, parser.sig, parser.key);
         if (result) {
-            msg = "You're logged in!"
+            msg = "Authentication Successful!"
+            io.sockets.socket(clients[parser.nonce]).emit('response', {msg: msg, result: result});
         } else {
-            msg = "You Failed!"
+            msg = "Authentication Failed!"
+            io.sockets.socket(clients[parser.nonce]).emit('response', {msg: msg, result: result});
         }
 
         delete urlNonce[parser.nonce];
     } else {
         msg = "Your Nut isn't registered"
         res.send(400);
+        io.sockets.socket(clients[parser.nonce]).emit('response', {msg: msg, result: result});
     }
 
-    io.sockets.socket(clients[parser.nonce]).emit('response', {msg: msg});
     res.send(result);
 
 });
 
 io.sockets.on('connection', function (socket) {
-  socket.emit('sqrl', { msg: 'Youre In!' });
   socket.on('register', function(nonce){
     clients[nonce['data']] = socket.id;
   });
