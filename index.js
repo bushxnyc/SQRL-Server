@@ -60,18 +60,19 @@ app.post('/sqrl', function (req, res) {
         var result = eccverify.check(parser.domain, parser.sig, parser.key);
         if (result) {
             msg = "Authentication Successful!"
-            io.sockets.socket(clients[parser.nonce]).emit('response', {msg: msg, result: result});
+            io.sockets.socket(clients[parser.nonce]).emit('response', {response: parser.results(), result: msg, status: true});
         } else {
             msg = "Authentication Failed!"
-            io.sockets.socket(clients[parser.nonce]).emit('response', {msg: msg, result: result});
+            io.sockets.socket(clients[parser.nonce]).emit('response', {response: parser.results(), result: msg, status: false});
         }
 
         delete urlNonce[parser.nonce];
-        delete clients[parser.nonce];
     } else {
-        msg = "Your Nut isn't registered"
+        msg = "Authentication Failed!";
         res.send(400);
-        io.sockets.socket(clients[parser.nonce]).emit('response', {msg: msg, result: result});
+        results = parser.results()
+        results[0]['result'] = ["This nut is no longer valid"]
+        io.sockets.socket(clients[parser.nonce]).emit('response', {response: results, result: msg, status: false});
     }
 
     res.send(result);

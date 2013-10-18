@@ -11,12 +11,16 @@
   </head>
   <body>
 
-    <div>
-        <a id="qrcode" href="<%= url %>">
-        </a>
-        <div id="message" style=" font-size: 25px; font-weight: bold; color: green; "></div>
-    </div>
-    <script type="text/javascript">
+  <div class="qr">
+      <a id="qrcode" href="<%= url %>">
+      </a>
+      <h3 style="text-align: center">Click or Scan the QRCode</h3>
+  </div>
+  <div class="results">
+      <div id="message" style="font-size: 25px; font-weight: bold; color: green; "></div>
+      <table id="results" border="2" cellpadding="5"></table>
+  </div>
+  <script type="text/javascript">
 
         var QRElem = document.getElementById('qrcode');
         var QROptions = {
@@ -28,12 +32,20 @@
         var socket = io.connect('http://localhost:9090');
         var data = "<%= nonce %>"
         socket.emit('register', {data: data});
+        $("#qrcode").click(function(){
+            $("table#results").html("");
+        });
         socket.on('response', function (data) {
-            if (data['result']) {
-                $("#message").html(data['msg'])
-            } else {
-                $("#message").css('color', 'red')
-                $("#message").html(data['msg'])
+                if (data['status'] == true) {
+                    $("#message").css('color', "green");
+                } else {
+                    $("#message").css('color', "red");
+                }
+                $("#message").html(data['result']);
+            var responses = data['response'];
+            $('<th><tr style="font-weight: bold"><td>Name</td><td>Value</td><td>Results</td></tr></th>').appendTo("table#results");
+            for (var i in responses) {
+                $('<tr><td style="font-weight: bold">' + responses[i]['name'] + '</td><td>' + responses[i]['value'] + '</td><td>' + responses[i]['result'] + '</td></tr>').appendTo("table#results");
             }
         });
 

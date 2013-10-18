@@ -1,4 +1,10 @@
-div {
+div.qr {
   width: 256px;
-  margin: auto;
+  float: left;
+  padding-right: 20px;
+}
+
+div.results {
+  float: left;
+  width: 64%;
 }
