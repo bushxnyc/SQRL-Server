@@ -45,7 +45,7 @@
             var responses = data['response'];
             $('<th><tr style="font-weight: bold"><td>Name</td><td>Value</td><td>Results</td></tr></th>').appendTo("table#results");
             for (var i in responses) {
-                $('<tr><td style="font-weight: bold">' + responses[i]['name'] + '</td><td>' + responses[i]['value'] + '</td><td>' + responses[i]['result'] + '</td></tr>').appendTo("table#results");
+                $('<tr><td style="font-weight: bold">' + responses[i]['name'] + '</td><td>' + responses[i]['value'] + '</td><td style="width: 216px">' + responses[i]['result'] + '</td></tr>').appendTo("table#results");
             }
         });
 

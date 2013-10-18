@@ -8,3 +8,8 @@ div.results {
   float: left;
   width: 64%;
 }
+
+td {
+  width: 100px;
+  word-wrap: break-word;
+}
