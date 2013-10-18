@@ -14,7 +14,10 @@
   <div class="qr">
       <a id="qrcode" href="<%= url %>">
       </a>
-      <h3 style="text-align: center">Click or Scan the QRCode</h3>
+      <h3 style="text-align: center">
+          Click or Scan the QRCode
+          <button id="reload" style="text-align: center">Reload Page<button/>
+      </h3>
   </div>
   <div class="results">
       <div id="message" style="font-size: 25px; font-weight: bold; color: green; "></div>
@@ -32,6 +35,9 @@
         var socket = io.connect('http://localhost:9090');
         var data = "<%= nonce %>"
         socket.emit('register', {data: data});
+        $("#reload").click(function(){
+            location.reload();
+        });
         $("#qrcode").click(function(){
             $("table#results").html("");
         });
