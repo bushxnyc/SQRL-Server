@@ -13,3 +13,8 @@ td {
   width: 100px;
   word-wrap: break-word;
 }
+
+p.nonce {
+  font-size: small;
+  text-align: center;
+}

@@ -12,12 +12,13 @@
   <body>
 
   <div class="qr">
+      <p class="nonce"><%= nonce %></p>
       <a id="qrcode" href="<%= url %>">
       </a>
       <h3 style="text-align: center">
           Click or Scan the QRCode
-          <button id="reload" style="text-align: center">Reload Page<button/>
       </h3>
+        <button id="reload"type="button">Reload Page</button> 
   </div>
   <div class="results">
       <div id="message" style="font-size: 25px; font-weight: bold; color: green; "></div>
