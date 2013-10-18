@@ -67,6 +67,7 @@ app.post('/sqrl', function (req, res) {
         }
 
         delete urlNonce[parser.nonce];
+        delete clients[parser.nonce];
     } else {
         msg = "Your Nut isn't registered"
         res.send(400);
