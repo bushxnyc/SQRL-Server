@@ -1,6 +1,7 @@
 #################
 ## Eclipse
 #################
+certs/
 logging
 *.pydevproject
 .project
