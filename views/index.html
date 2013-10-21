@@ -5,25 +5,26 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" href="global.css">
-        <script src="socket.io.js" type="text/javascript"></script>
+        <script src="/socket.io/socket.io.js" type="text/javascript"></script>
         <script src="qrcode.min.js" type="text/javascript"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   </head>
   <body>
 
   <div class="qr">
+      <button id="reload" style="width: 100%" type="button">Get New Link</button> 
       <p class="nonce"><%= nonce %></p>
       <a id="qrcode" href="<%= url %>">
       </a>
       <h3 style="text-align: center">
           Click or Scan the QRCode
       </h3>
-        <button id="reload"type="button">Reload Page</button> 
   </div>
   <div class="results">
       <div id="message" style="font-size: 25px; font-weight: bold; color: green; "></div>
-      <table id="results" border="2" cellpadding="5"></table>
+      <table style="display:none" id="results" border="2" cellpadding="5"></table>
   </div>
+  <a href="https://github.com/bushxnyc/SQRL-Server"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
   <script type="text/javascript">
 
         var QRElem = document.getElementById('qrcode');
@@ -33,7 +34,7 @@
         };
         var code = new QRCode(QRElem , QROptions);
 
-        var socket = io.connect('http://localhost:9090');
+        var socket = io.connect('http://<%= hostname %>:3000');
         var data = "<%= nonce %>"
         socket.emit('register', {data: data});
         $("#reload").click(function(){
@@ -54,6 +55,7 @@
             for (var i in responses) {
                 $('<tr><td style="font-weight: bold">' + responses[i]['name'] + '</td><td>' + responses[i]['value'] + '</td><td style="width: 216px">' + responses[i]['result'] + '</td></tr>').appendTo("table#results");
             }
+            $("table#results").css("display", "block");
         });
 
     </script>
