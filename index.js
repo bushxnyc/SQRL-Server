@@ -1,12 +1,17 @@
 // required modules
-var express = require('express'),
-    crypto = require('crypto'),
-    querystring = require('querystring'),
+var crypto = require('crypto'),
+    express = require('express'),
     ecc = require('./lib/ECCVerify'),
+    querystring = require('querystring'),
     SQRLParser = require('./lib/SQRLParser'),
-    io = require('socket.io').listen(9090);
+    fs = require('fs'),
+    https = require('https');
 
-var hostname = 'localhost';
+// Server name to host service from
+var hostname = 'sqrl.vbssi.com';
+
+// directory with ssl cert files
+var keys_dir = './certs/';
 
 // some salt for nonce
 var counter = 0;
@@ -17,7 +22,16 @@ var urlNonce = {},
     clients = {};
 
 // init express app
-var app = express();
+var app = express()
+    ,server = require('http').createServer(app).listen(3000)
+    ,io = require('socket.io').listen(server);
+
+server_options = {
+  key  : fs.readFileSync(keys_dir + 'server.pem'),
+  cert : fs.readFileSync(keys_dir + 'server.crt')
+}
+
+https.createServer(server_options,app).listen(443);
 
 // set development logging to console
 app.use(express.logger('dev'));
@@ -32,6 +46,15 @@ app.set('view engine', 'html');
 // setup static directory
 app.use(express.static(__dirname + '/static'));
 
+var getScheme = function(req) {
+    if (typeof req.connection.encrypted == "object") {
+        return "sqrl://"
+    } else {
+        return "qrl://"
+    }
+}
+
+
 // a get on our root will generate a qr code with
 // our sqrl url + nonce
 // create a new node hash object of type sha1
@@ -42,8 +65,8 @@ app.get('/', function (req, res) {
     var hash = crypto.createHash('md5');
     hash.update(new Date().getTime().toString() + counter, 'utf8');
     var nonce = hash.digest('hex');
-    var string = 'sqrl://localhost:8080/sqrl?nut=' + nonce.toString();
-    res.render('index', { url: string, nonce: nonce.toString() });
+    var string = getScheme(req) + hostname + '/sqrl?nut=' + nonce.toString();
+    res.render('index', { url: string, nonce: nonce.toString(), hostname: hostname });
     counter += 1;
     urlNonce[nonce] = new Date().getTime();
     console.log('Generated nonce: ' + nonce +
@@ -52,17 +75,17 @@ app.get('/', function (req, res) {
 
 // a post to our sqrl auth url
 app.post('*/sqrl', function (req, res) {
-    var parser = new SQRLParser(req)
+    var parser = new SQRLParser(req, hostname)
     console.log('Challenge for: ' + parser.nonce);
 
     if (urlNonce[parser.nonce]) {
 
         var result = eccverify.check(parser.domain, parser.sig, parser.key);
-        if (result) {
+        if (result == 200) {
             msg = "Authentication Successful!"
             io.sockets.socket(clients[parser.nonce]).emit('response', {response: parser.results(), result: msg, status: true});
         } else {
-            msg = "Authentication Failed!"
+            msg = "Authentication Failed! (Challenge Failed Verification)"
             io.sockets.socket(clients[parser.nonce]).emit('response', {response: parser.results(), result: msg, status: false});
         }
 
@@ -76,7 +99,6 @@ app.post('*/sqrl', function (req, res) {
     }
 
     res.send(result);
-
 });
 
 io.sockets.on('connection', function (socket) {
@@ -86,4 +108,4 @@ io.sockets.on('connection', function (socket) {
 });
 
 // listen on port 8080
-app.listen(8080);
+app.listen(80);
